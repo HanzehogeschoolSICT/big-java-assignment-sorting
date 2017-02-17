@@ -1,9 +1,12 @@
 package SortVisualisation.Controller;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
 /**
@@ -11,6 +14,9 @@ import javafx.stage.Stage;
  * Part of the big-java-assignment-sorting project.
  */
 public class HomeController extends Application {
+
+    @FXML
+    private Button testButton;
 
     public static void main(String[] args) {
         HomeController.launch(args);
@@ -24,4 +30,7 @@ public class HomeController extends Application {
         stage.show();
     }
 
+    public void handleTestButton(ActionEvent actionEvent) {
+        System.out.println("Hello from testButton's eventHandler method!");
+    }
 }
