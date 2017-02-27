@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.BarChart?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
@@ -8,71 +7,15 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.VBox?>
 
 <Pane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="SortVisualisation.Controller.HomeController">
    <children>
-      <TabPane prefHeight="620.0" prefWidth="800.0" tabClosingPolicy="UNAVAILABLE">
+      <TabPane tabClosingPolicy="UNAVAILABLE">
         <tabs>
-          <Tab text="BubbleSort">
-               <content>
-                  <GridPane prefHeight="620.0" prefWidth="780.0">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="513.0" minWidth="10.0" prefWidth="433.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="455.0" minWidth="10.0" prefWidth="432.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints maxHeight="348.0" minHeight="10.0" prefHeight="316.0" vgrow="SOMETIMES" />
-                      <RowConstraints maxHeight="478.0" minHeight="10.0" prefHeight="243.0" vgrow="SOMETIMES" />
-                      <RowConstraints maxHeight="272.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                     <children>
-                        <BarChart prefHeight="480.0" prefWidth="780.0" GridPane.columnSpan="2" GridPane.rowSpan="2">
-                          <xAxis>
-                            <CategoryAxis side="BOTTOM" />
-                          </xAxis>
-                          <yAxis>
-                            <NumberAxis side="LEFT" />
-                          </yAxis>
-                           <opaqueInsets>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </opaqueInsets>
-                        </BarChart>
-                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="780.0" GridPane.columnSpan="2" GridPane.rowIndex="2">
-                           <children>
-                              <Region prefHeight="52.0" prefWidth="46.0" />
-                              <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Start">
-                                 <opaqueInsets>
-                                    <Insets />
-                                 </opaqueInsets>
-                                 <font>
-                                    <Font size="16.0" />
-                                 </font>
-                              </Button>
-                              <Region prefHeight="52.0" prefWidth="22.0" />
-                              <Button mnemonicParsing="false" text="+1 Step">
-                                 <font>
-                                    <Font size="16.0" />
-                                 </font>
-                              </Button>
-                           </children>
-                           <opaqueInsets>
-                              <Insets />
-                           </opaqueInsets>
-                        </HBox>
-                     </children>
-                     <opaqueInsets>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </opaqueInsets>
-                  </GridPane>
-               </content>
-          </Tab>
           <Tab text="InsertionSort">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
@@ -82,6 +25,30 @@
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
               </content>
+            </Tab>
+            <Tab text="BubbleSort">
+                <content>
+                    <!--include bubblesort fxml -> met bubblesortcontroller-->
+                    <VBox>
+                        <children>
+                            <BarChart>
+                                <xAxis>
+                                    <CategoryAxis side="BOTTOM" />
+                                </xAxis>
+                                <yAxis>
+                                    <NumberAxis side="LEFT" />
+                                </yAxis>
+                            </BarChart>
+                            <HBox alignment="CENTER">
+                                <children>
+                                    <Button mnemonicParsing="false" text="Button" />
+                                    <Region prefHeight="49.0" prefWidth="22.0" />
+                                    <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Button" />
+                                </children>
+                            </HBox>
+                        </children>
+                    </VBox>
+                </content>
             </Tab>
         </tabs>
       </TabPane>
