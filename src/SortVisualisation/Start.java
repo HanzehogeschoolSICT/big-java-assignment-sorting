@@ -1,6 +1,6 @@
 package SortVisualisation;
 
-import SortVisualisation.Controller.HomeController;
+import SortVisualisation.Controller.SuperController;
 
 /**
  * Created by peterzen on 2017-02-16.
@@ -11,7 +11,7 @@ public class Start {
     public static void main(String[] args) {
         System.out.println("Hello world from the SortVisualisation.Start class");
 
-        HomeController.main(args);
+        SuperController.main(args);
     }
 
 

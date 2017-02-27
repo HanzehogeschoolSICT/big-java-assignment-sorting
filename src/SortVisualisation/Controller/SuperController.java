@@ -13,19 +13,19 @@ import javafx.stage.Stage;
  * Created by peterzen on 2017-02-17.
  * Part of the big-java-assignment-sorting project.
  */
-public class HomeController extends Application {
+public class SuperController extends Application {
 
     @FXML
     private Button testButton;
 
     public static void main(String[] args) {
-        HomeController.launch(args);
+        SuperController.launch(args);
     }
 
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("../View/Home.fxml"));
-        stage.setTitle("Hello world from the HomeController");
+        Parent root = FXMLLoader.load(getClass().getResource("../View/Super.fxml"));
+        stage.setTitle("Hello world from the SuperController");
         stage.setScene(new Scene(root, 600, 800));
         stage.show();
     }
