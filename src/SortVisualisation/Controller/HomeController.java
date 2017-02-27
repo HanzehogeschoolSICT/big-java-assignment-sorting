@@ -26,7 +26,7 @@ public class HomeController extends Application {
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("../View/Home.fxml"));
         stage.setTitle("Hello world from the HomeController");
-        stage.setScene(new Scene(root, 400, 300));
+        stage.setScene(new Scene(root, 600, 800));
         stage.show();
     }
 
