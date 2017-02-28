@@ -21,7 +21,7 @@ public class SuperController extends Application {
 
     @FXML private TabPane tabPane;
 
-    public static void main(String[] args) {
+    public static void bootSuperController(String[] args) {
         SuperController.launch(args);
     }
 
