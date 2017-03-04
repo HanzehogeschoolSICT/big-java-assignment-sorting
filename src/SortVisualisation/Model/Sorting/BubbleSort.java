@@ -5,37 +5,44 @@ package SortVisualisation.Model.Sorting;
  * Part of the big-java-assignment-sorting project.
  */
 public class BubbleSort extends AbstractSort {
-    int noSwaps = 0;
+    private boolean counting = false; // are we counting no-swaps from the start index?
+    private int noSwaps = 0;
+    private int length;
 
     public BubbleSort(int[] unsortedArray) {
         super(unsortedArray);
+        this.length = unsortedArray.length;
     }
 
     @Override
     public int[] sortOneStep() {
-        if (pointer < length && !isFinished()) { //&& times != 0
+        if (!isFinished()) {
             if (sortArray[pointer] > sortArray[pointer + 1]) {
+                // we need to swap, so turn of the counting and reset the noSwaps counter
+                counting = false;
+                noSwaps = 0;
+
                 int swap = sortArray[pointer];
                 sortArray[pointer] = sortArray[pointer + 1];
                 sortArray[pointer + 1] = swap;
+            } else {
+                if (!counting && pointer == 0)
+                    counting = true; // start counting, because we had a no-swap at index 0
+
+                if (counting)
+                    noSwaps++;
             }
 
             pointer++;
-            noSwaps = 0;
-        } else {
-            //times--;
-            //pointer = 0;
-            noSwaps++;
+            if (pointer == this.length-1)
+                pointer = 0; // reset pointer to the start
         }
         return sortArray;
     }
 
     @Override
     public boolean isFinished() {
-        if (noSwaps == length) {
-            return true;
-        }
-        return false;
+        return noSwaps == this.length;
     }
 
 
