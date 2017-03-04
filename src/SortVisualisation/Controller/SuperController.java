@@ -30,7 +30,7 @@ public class SuperController extends Application {
         stage.setTitle("Hello world from the SuperController");
         Parent root = FXMLLoader.load(getClass().getResource("../View/Super.fxml"));
 
-        stage.setScene(new Scene(root, 900, 1280));
+        stage.setScene(new Scene(root, 1000, 500));
         stage.show();
     }
 
