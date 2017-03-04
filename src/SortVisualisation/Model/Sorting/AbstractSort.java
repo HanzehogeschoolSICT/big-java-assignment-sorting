@@ -7,12 +7,20 @@ import SortVisualisation.Model.RandomGen;
  * Part of the big-java-assignment-sorting project.
  */
 public abstract class AbstractSort {
-    RandomGen list = new RandomGen();
     int max = 6; // info from controller of visualiseInput()
-    int[] sortArray = list.generateRandomInts(max);
+    int[] sortArray = RandomGen.generateRandomInts(max);
     int pointer = 0;
-    int times = sortArray.length;
     int length = sortArray.length;
 
+    protected AbstractSort(int[] unsortedArray) {
+        this.sortArray = unsortedArray;
+    }
+
+    public int getPointer() {
+        return pointer;
+    }
+
     abstract public int[] sortOneStep();
+
+    abstract public boolean isFinished();
 }
