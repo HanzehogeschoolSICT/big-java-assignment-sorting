@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- * Created by Femke Hoornveld on 02/03/17.
+ * Created by femkeh on 02/03/17.
  * Part of the big-java-assignment-sorting project.
  */
 public class RandomGen {

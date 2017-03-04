@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 
 /**
  * Created by peterzen on 2017-02-27.
+ * Modified by femkeh on 2017-3-2.
  * Part of the big-java-assignment-sorting project.
  */
 public class BubbleSortController {
