@@ -1,12 +1,15 @@
 package SortVisualisation.Controller;
 
 import SortVisualisation.Model.ChartDataManager;
+import SortVisualisation.Model.RandomGen;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
 import java.util.stream.IntStream;
@@ -33,33 +36,17 @@ public class BubbleSortController {
 
 
     private ChartDataManager chartData;
-    private int[] inputArray;
 
     private static int fakePointer = 0;
 
     public BubbleSortController() {
-        inputArray = new int[100];
-        IntStream.range(0, 100)
-                .forEach(i -> {
-                    Double random = (Math.random() * 100 * i);
-                    inputArray[i] = random.intValue();
-                });
     }
 
     public void visualiseOneSortingStep(ActionEvent actionEvent) {
         // @TODO: perform one step of our sorting algorithm
 
-        // Prepare the (updated) collection of random numeric values for our BarChart
-        chartData.updateDataSet(inputArray);
-
-        // Load the prepared data into our BarChart
-        chartData.load();
-
-        // Set-up appropriate styling classes for each bar
-        chartData.styleChartData("BarChart-default");
-
         chartData.clearSelectedNodes();
-        // @TODO: retrieve pointer (selected index) information from sort method class
+        // @TODO: retrieve pointer (selected index) information from sort factory
         IntStream.range(fakePointer, fakePointer + 2).forEach(i -> chartData.selectNode(i));
         fakePointer++;
 
@@ -68,7 +55,7 @@ public class BubbleSortController {
 
     public void startOrPauseSorting(ActionEvent actionEvent) {
         System.out.println("This should start/pause the continuous sorting of the BubbleSort algorithm");
-        System.out.println(btnStartPause.getText());
+        System.out.println(btnStartPause.getText() + " == Done");
     }
 
     /**
@@ -92,12 +79,36 @@ public class BubbleSortController {
     }
 
     public void visualiseInput(ActionEvent actionEvent) {
-        if ((fldInput.getText() != null && !fldInput.getText().isEmpty())) {
-            System.out.println("This should visualise " + fldInput.getText() + " bars in the bar chart.");
-        } else {
-            System.out.println("You have not entered a number for how many bars you would like to see.");
+        // @TODO: fix proper error handling
+        if (!textFieldHasValidInt(fldInput)) {
+            System.out.println("Error: You have not entered a number for how many bars you would like to see.");
+            return;
         }
-        System.out.println(btnInput.getText());
+
+        // generate the random integers collection
+        int[] randomIntegers = RandomGen.generateRandomInts(Integer.parseInt(fldInput.getText()));
+
+        // update the barChart
+        chartData.updateDataSet(randomIntegers);
+        chartData.load();
+        chartData.styleChartData("BarChart-default");
+
+        // unlock the sorting buttons
+        btnStartPause.disableProperty().setValue(false);
+        btnOneStep.disableProperty().setValue(false);
+
+        System.out.println(btnInput.getText() + " == Done");
+    }
+
+    private boolean textFieldHasValidInt(TextField fldText) {
+        try {
+            int i = Integer.parseInt(fldText.getText());
+            System.out.println(i + " is valid");
+            return true;
+        } catch (NumberFormatException e) {
+            System.out.println("Input: "+ fldText.getText() +" could not be parsed to an integer");
+        }
+        return false;
     }
 
 }

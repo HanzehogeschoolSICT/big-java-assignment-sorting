@@ -33,6 +33,7 @@
         </BarChart>
         <HBox alignment="CENTER_LEFT" prefHeight="40.0" VBox.vgrow="ALWAYS">
             <Button
+                disable="true"
                 mnemonicParsing="false"
                 text="Start"
                 fx:id="btnStartPause"
@@ -42,6 +43,7 @@
                 </font>
             </Button>
             <Button
+                disable="true"
                 layoutX="10.0"
                 layoutY="10.0"
                 mnemonicParsing="false"
@@ -65,7 +67,7 @@
                 </HBox.margin>
             </Label>
             <TextField prefWidth="70.0"
-                    promptText="0-1000"
+                    promptText="0-300"
                     fx:id="fldInput"/>
             <Button
                 layoutX="10.0"

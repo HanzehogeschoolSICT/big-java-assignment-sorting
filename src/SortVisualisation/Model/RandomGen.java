@@ -16,7 +16,6 @@ public class RandomGen {
         return intSeries;
     }
 
-    /*
     public static ArrayList<Integer> generateRandomList(int max) {
         ArrayList<Integer> intSeries = new ArrayList<>();
         for(int i=1; i<max+1; i++) {
@@ -25,5 +24,4 @@ public class RandomGen {
         Collections.shuffle(intSeries);
         return intSeries;
     }
-    */
 }
