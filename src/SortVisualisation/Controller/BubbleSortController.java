@@ -7,6 +7,7 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 
 import java.util.stream.IntStream;
 
@@ -24,7 +25,12 @@ public class BubbleSortController {
     @FXML
     private Button btnStartPause;
     @FXML
+    private Button btnInput;
+    @FXML
     private BarChart barChart;
+    @FXML
+    private TextField fldInput;
+
 
     private ChartDataManager chartData;
     private int[] inputArray;
@@ -54,7 +60,7 @@ public class BubbleSortController {
 
         chartData.clearSelectedNodes();
         // @TODO: retrieve pointer (selected index) information from sort method class
-        IntStream.range(fakePointer, fakePointer+2).forEach(i -> chartData.selectNode(i));
+        IntStream.range(fakePointer, fakePointer + 2).forEach(i -> chartData.selectNode(i));
         fakePointer++;
 
         System.out.println(btnOneStep.getText() + " == Done");
@@ -74,14 +80,24 @@ public class BubbleSortController {
         // Use the ChartDataManager to manage our BarChart data
         this.chartData = new ChartDataManager(barChart);
 
-        // Prepare the collection of random numeric values for our BarChart
-        chartData.updateDataSet(inputArray); // @TODO: replace this method call with the actual RandomGen data
+        // @TODO: generate the chartData in the visualiseInput callback
+//        // Prepare the collection of random numeric values for our BarChart
+//        chartData.updateDataSet(inputArray); // @TODO: replace this method call with the actual RandomGen data
+//
+//        // Load the prepared data into our BarChart instance
+//        chartData.load();
+//
+//        // Add a css class to each Bar in our BarChart
+//        chartData.styleChartData("BarChart-default");
+    }
 
-        // Load the prepared data into our BarChart instance
-        chartData.load();
-
-        // Add a css class to each Bar in our BarChart
-        chartData.styleChartData("BarChart-default");
+    public void visualiseInput(ActionEvent actionEvent) {
+        if ((fldInput.getText() != null && !fldInput.getText().isEmpty())) {
+            System.out.println("This should visualise " + fldInput.getText() + " bars in the bar chart.");
+        } else {
+            System.out.println("You have not entered a number for how many bars you would like to see.");
+        }
+        System.out.println(btnInput.getText());
     }
 
 }
