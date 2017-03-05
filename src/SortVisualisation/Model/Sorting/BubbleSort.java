@@ -36,6 +36,8 @@ public class BubbleSort extends AbstractSort {
             pointer++;
             if (pointer == this.length-1)
                 pointer = 0; // reset pointer to the start
+        } else {
+            pointer = 0;
         }
         return sortArray;
     }

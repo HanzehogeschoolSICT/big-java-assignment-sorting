@@ -16,6 +16,7 @@
      fx:controller="SortVisualisation.Controller.BubbleSortController">
     <VBox>
         <BarChart fx:id="barChart"
+                  animated="false"
                   legendVisible="false"
                   barGap="3"
                   categoryGap="0"

@@ -5,8 +5,8 @@ package SortVisualisation.Model.Sorting;
  * Part of the big-java-assignment-sorting project.
  */
 public abstract class AbstractSort {
-    int[] sortArray;
-    int pointer = 0;
+    protected int[] sortArray;
+    protected int pointer = 0;
 
     protected AbstractSort(int[] unsortedArray) {
         this.sortArray = unsortedArray;
