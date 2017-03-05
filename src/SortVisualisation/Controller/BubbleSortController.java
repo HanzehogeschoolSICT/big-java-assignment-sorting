@@ -101,6 +101,10 @@ public class BubbleSortController {
         this.updateBarChartData();
         chartData.selectNode(0); chartData.selectNode(1); // the pointer always starts at 0 (and compares with 1)
 
+        // reset our SortingThread
+        sortingThread = null;
+        btnStartPause.setText("Start");
+
         // unlock the sorting buttons
         btnStartPause.disableProperty().setValue(false);
         btnOneStep.disableProperty().setValue(false);
