@@ -6,9 +6,11 @@ import SortVisualisation.Model.Sorting.AbstractSort;
 import SortVisualisation.Model.Sorting.BubbleSort;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
 import javafx.scene.control.Button;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 
 /**
@@ -17,6 +19,10 @@ import javafx.scene.control.TextField;
  * Part of the big-java-assignment-sorting project.
  */
 public class BubbleSortController {
+    @FXML
+    private Slider sldrDelay;
+    @FXML
+    private TextField fldDelay;
     @FXML
     private Button btnOneStep;
     @FXML
@@ -36,16 +42,21 @@ public class BubbleSortController {
     public BubbleSortController() {
     }
 
+    public void updateDelaySlider(Event event) {
+        if (this.textFieldHasValidInt(fldDelay)) {
+            sldrDelay.setValue(Double.parseDouble(fldDelay.getText()));
+        }
+    }
+
+    public void updateDelayField(Event event) {
+        Double value = sldrDelay.getValue();
+        fldDelay.setText(value.intValue() + "");
+    }
+
     public void visualiseOneSortingStep(ActionEvent actionEvent) {
         // perform one sorting step on our unsorted array
         unsortedIntegers = sorter.sortOneStep();
         updateBarChartData();
-
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
         // set styling for bars that are being compared
         updateBarChartSelected();
@@ -99,7 +110,8 @@ public class BubbleSortController {
 
         // update the barChart
         this.updateBarChartData();
-        chartData.selectNode(0); chartData.selectNode(1); // the pointer always starts at 0 (and compares with 1)
+        chartData.selectNode(0);
+        chartData.selectNode(1); // the pointer always starts at 0 (and compares with 1)
 
         // reset our SortingThread
         sortingThread = null;
@@ -115,10 +127,10 @@ public class BubbleSortController {
     private boolean textFieldHasValidInt(TextField fldText) {
         try {
             int i = Integer.parseInt(fldText.getText());
-            System.out.println(i + " is valid");
+//            System.out.println(i + " is valid");
             return true;
         } catch (NumberFormatException e) {
-            System.out.println("Input: "+ fldText.getText() +" could not be parsed to an integer");
+            System.out.println("Input: " + fldText.getText() + " could not be parsed to an integer");
         }
         return false;
     }
@@ -133,7 +145,14 @@ public class BubbleSortController {
         chartData.clearSelectedNodes();
         int pointer = sorter.getPointer();
         chartData.selectNode(pointer);
-        chartData.selectNode(pointer+1);
+        chartData.selectNode(pointer + 1);
+    }
+
+    private int getDelayPerStep() {
+        int delay = 100; // defaults to 100ms
+        if (textFieldHasValidInt(fldDelay))
+            delay = Integer.parseInt(fldDelay.getText());
+        return delay;
     }
 
     private class SortingThread extends Thread {
@@ -152,9 +171,8 @@ public class BubbleSortController {
                     updateBarChartSelected();
                 });
 
-                // @TODO: replace this with user-modifiable implementation to delay
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(getDelayPerStep());
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
