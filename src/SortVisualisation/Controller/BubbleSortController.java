@@ -2,17 +2,16 @@ package SortVisualisation.Controller;
 
 import SortVisualisation.Model.ChartDataManager;
 import SortVisualisation.Model.RandomGen;
+import SortVisualisation.Model.Sorting.AbstractSort;
+import SortVisualisation.Model.Sorting.BubbleSort;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
-
-import java.util.stream.IntStream;
 
 /**
  * Created by peterzen on 2017-02-27.
@@ -21,9 +20,9 @@ import java.util.stream.IntStream;
  */
 public class BubbleSortController {
     @FXML
-    private NumberAxis bcYAxis;
+    private Slider sldrDelay;
     @FXML
-    private CategoryAxis bcXAxis;
+    private TextField fldDelay;
     @FXML
     private Button btnOneStep;
     @FXML
@@ -35,27 +34,54 @@ public class BubbleSortController {
     @FXML
     private TextField fldInput;
 
-
     private ChartDataManager chartData;
-
-    private static int fakePointer = 0;
+    private int[] unsortedIntegers;
+    private AbstractSort sorter;
+    private SortingThread sortingThread;
 
     public BubbleSortController() {
     }
 
-    public void visualiseOneSortingStep(ActionEvent actionEvent) {
-        // @TODO: perform one step of our sorting algorithm
+    public void updateDelaySlider(Event event) {
+        if (this.textFieldHasValidInt(fldDelay)) {
+            sldrDelay.setValue(Double.parseDouble(fldDelay.getText()));
+        }
+    }
 
-        chartData.clearSelectedNodes();
-        // @TODO: retrieve pointer (selected index) information from sort factory
-        IntStream.range(fakePointer, fakePointer + 2).forEach(i -> chartData.selectNode(i));
-        fakePointer++;
+    public void updateDelayField(Event event) {
+        Double value = sldrDelay.getValue();
+        fldDelay.setText(value.intValue() + "");
+    }
+
+    public void visualiseOneSortingStep(ActionEvent actionEvent) {
+        // perform one sorting step on our unsorted array
+        unsortedIntegers = sorter.sortOneStep();
+        updateBarChartData();
+
+        // set styling for bars that are being compared
+        updateBarChartSelected();
 
         System.out.println(btnOneStep.getText() + " == Done");
     }
 
     public void startOrPauseSorting(ActionEvent actionEvent) {
-        System.out.println("This should start/pause the continuous sorting of the BubbleSort algorithm");
+        if (btnStartPause.getText().equals("Start")) {
+            btnStartPause.setText("Pause");
+
+            // start the SortingThread
+            if (sortingThread == null) {
+                sortingThread = new SortingThread();
+                sortingThread.start();
+            } else {
+                sortingThread.running = true;
+            }
+        } else {
+            btnStartPause.setText("Start");
+
+            // pause the SortingThread
+            sortingThread.running = false;
+        }
+
         System.out.println(btnStartPause.getText() + " == Done");
     }
 
@@ -67,16 +93,6 @@ public class BubbleSortController {
     public void initialize() {
         // Use the ChartDataManager to manage our BarChart data
         this.chartData = new ChartDataManager(barChart);
-
-        // @TODO: generate the chartData in the visualiseInput callback
-//        // Prepare the collection of random numeric values for our BarChart
-//        chartData.updateDataSet(inputArray); // @TODO: replace this method call with the actual RandomGen data
-//
-//        // Load the prepared data into our BarChart instance
-//        chartData.load();
-//
-//        // Add a css class to each Bar in our BarChart
-//        chartData.styleChartData("BarChart-default");
     }
 
     public void visualiseInput(ActionEvent actionEvent) {
@@ -87,12 +103,19 @@ public class BubbleSortController {
         }
 
         // generate the random integers collection
-        int[] randomIntegers = RandomGen.generateRandomInts(Integer.parseInt(fldInput.getText()));
+        unsortedIntegers = RandomGen.generateRandomInts(Integer.parseInt(fldInput.getText()));
+
+        // initialize our sorting algorithm
+        sorter = new BubbleSort(unsortedIntegers);
 
         // update the barChart
-        chartData.updateDataSet(randomIntegers);
-        chartData.load();
-        chartData.styleChartData("BarChart-default");
+        this.updateBarChartData();
+        chartData.selectNode(0);
+        chartData.selectNode(1); // the pointer always starts at 0 (and compares with 1)
+
+        // reset our SortingThread
+        sortingThread = null;
+        btnStartPause.setText("Start");
 
         // unlock the sorting buttons
         btnStartPause.disableProperty().setValue(false);
@@ -104,12 +127,57 @@ public class BubbleSortController {
     private boolean textFieldHasValidInt(TextField fldText) {
         try {
             int i = Integer.parseInt(fldText.getText());
-            System.out.println(i + " is valid");
+//            System.out.println(i + " is valid");
             return true;
         } catch (NumberFormatException e) {
-            System.out.println("Input: "+ fldText.getText() +" could not be parsed to an integer");
+            System.out.println("Input: " + fldText.getText() + " could not be parsed to an integer");
         }
         return false;
+    }
+
+    private void updateBarChartData() {
+        chartData.updateDataSet(unsortedIntegers);
+        chartData.load();
+        chartData.styleChartData("BarChart-default");
+    }
+
+    private void updateBarChartSelected() {
+        chartData.clearSelectedNodes();
+        int pointer = sorter.getPointer();
+        chartData.selectNode(pointer);
+        chartData.selectNode(pointer + 1);
+    }
+
+    private int getDelayPerStep() {
+        int delay = 100; // defaults to 100ms
+        if (textFieldHasValidInt(fldDelay))
+            delay = Integer.parseInt(fldDelay.getText());
+        return delay;
+    }
+
+    private class SortingThread extends Thread {
+        private volatile boolean running = true;
+
+        @Override
+        public void run() {
+            while (!sorter.isFinished()) {
+                while (!running) {
+                    yield();
+                }
+
+                unsortedIntegers = sorter.sortOneStep();
+                Platform.runLater(() -> {
+                    updateBarChartData();
+                    updateBarChartSelected();
+                });
+
+                try {
+                    Thread.sleep(getDelayPerStep());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
 }
