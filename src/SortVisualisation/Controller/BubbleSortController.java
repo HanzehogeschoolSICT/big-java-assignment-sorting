@@ -1,6 +1,7 @@
 package SortVisualisation.Controller;
 
 import SortVisualisation.Model.ChartDataManager;
+import SortVisualisation.Model.Pointer;
 import SortVisualisation.Model.RandomGen;
 import SortVisualisation.Model.Sorting.AbstractSort;
 import SortVisualisation.Model.Sorting.BubbleSort;
@@ -143,9 +144,8 @@ public class BubbleSortController {
 
     private void updateBarChartSelected() {
         chartData.clearSelectedNodes();
-        int pointer = sorter.getPointer();
-        chartData.selectNode(pointer);
-        chartData.selectNode(pointer + 1);
+        Pointer pointer = sorter.getPointer();
+        pointer.getIndices().forEach(i -> chartData.selectNode(i));
     }
 
     private int getDelayPerStep() {
