@@ -20,71 +20,9 @@ import javafx.scene.control.TextField;
  * Modified by femkeh on 2017-05-03.
  * Part of the big-java-assignment-sorting project.
  */
-public class InsertionSortController {
-    @FXML
-    private Slider sldrDelay;
-    @FXML
-    private TextField fldDelay;
-    @FXML
-    private Button btnOneStep;
-    @FXML
-    private Button btnStartPause;
-    @FXML
-    private Button btnInput;
-    @FXML
-    private BarChart barChart;
-    @FXML
-    private TextField fldInput;
-
-    private ChartDataManager chartData;
-    private int[] unsortedIntegers;
-    private AbstractSort sorter;
-    private InsertionSortController.SortingThread sortingThread;
+public class InsertionSortController extends AbstractSortController {
 
     public InsertionSortController() {
-    }
-
-    public void updateDelaySlider(Event event) {
-        if (this.textFieldHasValidInt(fldDelay)) {
-            sldrDelay.setValue(Double.parseDouble(fldDelay.getText()));
-        }
-    }
-
-    public void updateDelayField(Event event) {
-        Double value = sldrDelay.getValue();
-        fldDelay.setText(value.intValue() + "");
-    }
-
-    public void visualiseOneSortingStep(ActionEvent actionEvent) {
-        // perform one sorting step on our unsorted array
-        unsortedIntegers = sorter.sortOneStep();
-        updateBarChartData();
-
-        // set styling for bars that are being compared
-        updateBarChartSelected();
-
-        System.out.println(btnOneStep.getText() + " == Done");
-    }
-
-    public void startOrPauseSorting(ActionEvent actionEvent) {
-        if (btnStartPause.getText().equals("Start")) {
-            btnStartPause.setText("Pause");
-
-            // start the SortingThread
-            if (sortingThread == null) {
-                sortingThread = new InsertionSortController.SortingThread();
-                sortingThread.start();
-            } else {
-                sortingThread.running = true;
-            }
-        } else {
-            btnStartPause.setText("Start");
-
-            // pause the SortingThread
-            sortingThread.running = false;
-        }
-
-        System.out.println(btnStartPause.getText() + " == Done");
     }
 
     /**
@@ -98,55 +36,14 @@ public class InsertionSortController {
     }
 
     public void visualiseInput(ActionEvent actionEvent) {
-        // @TODO: fix proper error handling
-        if (!textFieldHasValidInt(fldInput)) {
-            System.out.println("Error: You have not entered a number for how many bars you would like to see.");
-            return;
-        }
-
-        // generate the random integers collection
-        unsortedIntegers = RandomGen.generateRandomInts(Integer.parseInt(fldInput.getText()));
+        super.visualiseInput(actionEvent);
 
         // initialize our sorting algorithm
         sorter = new InsertionSort(unsortedIntegers);
 
-        // update the barChart
-        this.updateBarChartData();
+        // update the barChart default selected nodes
         chartData.selectNode(0);
         chartData.selectNode(1); // the pointer always starts at 0 (and compares with 1)
-
-        // reset our SortingThread
-        sortingThread = null;
-        btnStartPause.setText("Start");
-
-        // unlock the sorting buttons
-        btnStartPause.disableProperty().setValue(false);
-        btnOneStep.disableProperty().setValue(false);
-
-        System.out.println(btnInput.getText() + " == Done");
-    }
-
-    private boolean textFieldHasValidInt(TextField fldText) {
-        try {
-            int i = Integer.parseInt(fldText.getText());
-//            System.out.println(i + " is valid");
-            return true;
-        } catch (NumberFormatException e) {
-            System.out.println("Input: " + fldText.getText() + " could not be parsed to an integer");
-        }
-        return false;
-    }
-
-    private void updateBarChartData() {
-        chartData.updateDataSet(unsortedIntegers);
-        chartData.load();
-        chartData.styleChartData("BarChart-default");
-    }
-
-    private void updateBarChartSelected() {
-        chartData.clearSelectedNodes();
-        Pointer pointer = sorter.getPointer();
-        pointer.getIndices().forEach(i -> chartData.selectNode(i));
     }
 
 //    private void updateBarChartInsertSelected() {
@@ -164,37 +61,5 @@ public class InsertionSortController {
 //            }
 //        }
 //    }
-
-    private int getDelayPerStep() {
-        int delay = 100; // defaults to 100ms
-        if (textFieldHasValidInt(fldDelay))
-            delay = Integer.parseInt(fldDelay.getText());
-        return delay;
-    }
-
-    private class SortingThread extends Thread {
-        private volatile boolean running = true;
-
-        @Override
-        public void run() {
-            while (!sorter.isFinished()) {
-                while (!running) {
-                    yield();
-                }
-
-                unsortedIntegers = sorter.sortOneStep();
-                Platform.runLater(() -> {
-                    updateBarChartData();
-                    updateBarChartSelected();
-                });
-
-                try {
-                    Thread.sleep(getDelayPerStep());
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
 
 }
