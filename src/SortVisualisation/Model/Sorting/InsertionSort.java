@@ -18,17 +18,17 @@ public class InsertionSort extends AbstractSort {
 
     @Override
     public Pointer getPointer() {
-        return new Pointer(new int[]{firstPointer, temp});
+        return new Pointer(new int[]{firstPointer, firstPointer+1});
     }
 
     @Override
     public int[] sortOneStep() {
         if (!isFinished()) {
-            // first i ints are already in order
-            int insert = sortArray[firstPointer + 1]; // get i int to put in order
+            // first pointer+1 ints are already in order
+            int insert = sortArray[firstPointer + 1]; // get pointer+1 int to put in order
             temp = firstPointer;
             while (temp >= 0 && insert < sortArray[temp]) {
-                // all ints larger than i move one place to the right in the array
+                // all ints larger than pointer+1 move one place to the right in the array
                 sortArray[temp + 1] = sortArray[temp];
                 temp--;
             }

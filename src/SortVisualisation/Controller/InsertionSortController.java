@@ -149,22 +149,6 @@ public class InsertionSortController {
         pointer.getIndices().forEach(i -> chartData.selectNode(i));
     }
 
-//    private void updateBarChartInsertSelected() {
-//        chartData.clearSelectedNodes();
-//        int pointer = sorter.getPointer();
-//        chartData.selectNode(pointer);
-//        if (pointer+1 <= unsortedIntegers.length-1) { //otherwise index out of bounds at the end when done with sort
-//            chartData.selectNode(pointer + 1);
-//        }
-//        while (sorter.getTemp() < 5) {
-//            int temp = sorter.getTemp();
-//            chartData.selectNode(temp);
-//            if (temp+1 <= unsortedIntegers.length-1) { //otherwise index out of bounds at the end when done with sort
-//                chartData.selectNode(temp + 1);
-//            }
-//        }
-//    }
-
     private int getDelayPerStep() {
         int delay = 100; // defaults to 100ms
         if (textFieldHasValidInt(fldDelay))
