@@ -1,26 +1,35 @@
 package SortVisualisation.Controller;
 
+import SortVisualisation.Model.ChartDataManager;
+import SortVisualisation.Model.Sorting.QuickSort;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 
 /**
  * Created by peterzen on 2017-02-28.
  * Part of the big-java-assignment-sorting project.
  */
-public class QuickSortController {
+public class QuickSortController extends AbstractSortController {
 
-    @FXML private Button btnOneStep;
-    @FXML private Button btnStartPause;
-
-    public void visualiseOneSortingStep(ActionEvent actionEvent) {
-        System.out.println("This should do 1 visual sorting step of the QuickSort algorithm.");
-        System.out.println(btnOneStep.getText());
+    public QuickSortController() {
     }
 
-    public void startOrPauseSorting(ActionEvent actionEvent) {
-        System.out.println("This should start/pause the continuous sorting of the QuickSort algorithm");
-        System.out.println(btnStartPause.getText());
+    /**
+     * This method is automatically invoked when an fxml file, that points to this
+     * Controller, is loaded.
+     */
+    @SuppressWarnings("unused")
+    public void initialize() {
+        // Use the ChartDataManager to manage our BarChart data
+        this.chartData = new ChartDataManager(barChart);
+    }
+
+    @Override
+    public void visualiseInput(ActionEvent actionEvent) {
+        super.visualiseInput(actionEvent);
+
+        // initialize our sorting algorithm
+        sorter = null;
+        sorter = new QuickSort(unsortedIntegers);
     }
 
 }

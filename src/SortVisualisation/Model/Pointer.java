@@ -43,4 +43,7 @@ public class Pointer {
         }
     }
 
+    public void updateIndex(int i, int value) {
+        indices.set(i, value);
+    }
 }

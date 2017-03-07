@@ -2,9 +2,7 @@ package SortVisualisation.Model.Sorting;
 
 import SortVisualisation.Model.Pointer;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Queue;
+import java.util.concurrent.Semaphore;
 
 /**
  * Created by peterzen on 2017-03-05.
@@ -13,8 +11,10 @@ import java.util.Queue;
  */
 public class QuickSort extends AbstractSort {
     private int arrLength;
+    private boolean isFinished = false;
     private Pointer pointer;
-    private QuickSortQueue taskQueue;
+    private SteppableThread steppableThread;
+    private static final Semaphore blockToStepsSemaphore = new Semaphore(0);
 
     public QuickSort(int[] sortArray) {
         super(sortArray);
@@ -25,13 +25,16 @@ public class QuickSort extends AbstractSort {
 
     @Override
     public Pointer getPointer() {
-        return null;
+        return pointer;
     }
 
     @Override
     public int[] sortOneStep() {
-        if (taskQueue == null) {
-            taskQueue = new QuickSortQueue();
+        if (steppableThread == null) {
+            steppableThread = new SteppableThread();
+            steppableThread.start();
+        } else {
+            blockToStepsSemaphore.release(); // release a semaphore permit so the SteppableThread stops blocking
         }
 
         return sortArray;
@@ -39,44 +42,7 @@ public class QuickSort extends AbstractSort {
 
     @Override
     public boolean isFinished() {
-        return false;
-    }
-
-    private void oneRecursiveStep(int[] inputArray, int fromIndex, int toIndex, Integer pivot) {
-        if (pivot == null) {
-            selectPivot();
-            return;
-        }
-
-//        leftPointer = fromIndex;
-//        rightPointer = toIndex;
-//        while (leftPointer <= rightPointer) { // @TODO: possibly change this to an if statement and queue whether it needs to be checked again
-//            // while values are on the correct side from the pivot, skip them
-//            while (inputArray[leftPointer] < pivotValue)
-//                leftPointer++;
-//            while (inputArray[rightPointer] > pivotValue)
-//                rightPointer++;
-//
-//            if (leftPointer <= rightPointer) {
-//                swapValues(leftPointer, rightPointer);
-//                leftPointer++;
-//                rightPointer++;
-//            }
-//        }
-//
-//        if (fromIndex < rightPointer) {
-//            // we have sub-array on the left side from the pivot,
-//            // that needs to be recursively called
-//            // @TODO: idea: create a queue of next steps needed with the parameters needed for the
-//            // next recursive step
-//        }
-//        if (toIndex > leftPointer) {
-//            // we have sub-array on the right side from the pivot,
-//            // that needs to be recursively called
-//
-//        }
-//
-//        pivotSelected = false;
+        return isFinished;
     }
 
     private void swapValues(int index1, int index2) {
@@ -85,102 +51,76 @@ public class QuickSort extends AbstractSort {
         sortArray[index2] = temp;
     }
 
-    private int selectPivot() {
-        int pivotIndex = arrLength / 2;
-        pointer.setCurrent(pivotIndex);
-        return sortArray[pivotIndex];
-    }
+    private class SteppableThread extends Thread {
 
-    private class QuickSortQueue implements Queue {
-
-        @Override
-        public int size() {
-            return 0;
+        private int selectPivot(int[] inputArray, int fromIndex, int toIndex) {
+            int pivotIndex = fromIndex + (toIndex - fromIndex) / 2;
+            pointer.setCurrent(pivotIndex);
+            return inputArray[pivotIndex];
         }
 
         @Override
-        public boolean isEmpty() {
-            return false;
+        public void run() {
+            try {
+                recursiveQuickSort(sortArray, 0, arrLength - 1);
+                // if we get here, we can assume the quickSort finished
+                isFinished = true;
+                System.out.println("WE FINISHED!");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
-        @Override
-        public boolean contains(Object o) {
-            return false;
-        }
+        private void recursiveQuickSort(int[] inputArray, int fromIndex, int toIndex) throws InterruptedException {
+            if (inputArray == null || inputArray.length == 0 || fromIndex >= toIndex)
+                return;
 
-        @Override
-        public Iterator iterator() {
-            return null;
-        }
+            int pivotValue = selectPivot(inputArray, fromIndex, toIndex);
+            blockToStepsSemaphore.acquire(); // acquire semaphore to block until sortOneStep is called
 
-        @Override
-        public Object[] toArray() {
-            return new Object[0];
-        }
+            int leftPointer = fromIndex;
+            int rightPointer = toIndex;
+            pointer.setCurrent(new int[]{leftPointer, rightPointer});
+            blockToStepsSemaphore.acquire(); // acquire semaphore to block until sortOneStep is called
+            while (leftPointer <= rightPointer) {
+                // while values are on the correct side from the pivot, skip them
+                while (inputArray[leftPointer] < pivotValue) {
+                    leftPointer++;
+                    pointer.updateIndex(0, leftPointer);
+                    blockToStepsSemaphore.acquire(); // acquire semaphore to block until sortOneStep is called
+                }
 
-        @Override
-        public Object[] toArray(Object[] objects) {
-            return new Object[0];
-        }
+                while (inputArray[rightPointer] > pivotValue) {
+                    rightPointer--;
+                    pointer.updateIndex(1, rightPointer);
+                    blockToStepsSemaphore.acquire(); // acquire semaphore to block until sortOneStep is called
+                }
 
-        @Override
-        public boolean add(Object o) {
-            return false;
-        }
+                if (leftPointer <= rightPointer) {
+                    swapValues(leftPointer, rightPointer);
+                    pointer.setCurrent(new int[]{leftPointer, rightPointer});
+                    blockToStepsSemaphore.acquire(); // acquire semaphore to block until sortOneStep is called
 
-        @Override
-        public boolean remove(Object o) {
-            return false;
-        }
+                    leftPointer++;
+                    pointer.updateIndex(0, leftPointer);
+                    blockToStepsSemaphore.acquire(); // acquire semaphore to block until sortOneStep is called
 
-        @Override
-        public boolean addAll(Collection collection) {
-            return false;
-        }
+                    rightPointer--;
+                    pointer.updateIndex(1, rightPointer);
+                    blockToStepsSemaphore.acquire(); // acquire semaphore to block until sortOneStep is called
+                }
+            }
 
-        @Override
-        public void clear() {
-
-        }
-
-        @Override
-        public boolean retainAll(Collection collection) {
-            return false;
-        }
-
-        @Override
-        public boolean removeAll(Collection collection) {
-            return false;
-        }
-
-        @Override
-        public boolean containsAll(Collection collection) {
-            return false;
-        }
-
-        @Override
-        public boolean offer(Object o) {
-            return false;
-        }
-
-        @Override
-        public Object remove() {
-            return null;
-        }
-
-        @Override
-        public Object poll() {
-            return null;
-        }
-
-        @Override
-        public Object element() {
-            return null;
-        }
-
-        @Override
-        public Object peek() {
-            return null;
+            if (fromIndex < rightPointer) {
+                // we have sub-array on the left side from the pivot,
+                // that needs to be recursively called
+                recursiveQuickSort(inputArray, fromIndex, rightPointer);
+            }
+            if (toIndex > leftPointer) {
+                // we have sub-array on the right side from the pivot,
+                // that needs to be recursively called
+                recursiveQuickSort(inputArray, leftPointer, toIndex);
+            }
         }
     }
 
