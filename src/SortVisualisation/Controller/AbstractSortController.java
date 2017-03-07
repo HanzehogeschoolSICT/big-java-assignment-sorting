@@ -4,7 +4,6 @@ import SortVisualisation.Model.ChartDataManager;
 import SortVisualisation.Model.Pointer;
 import SortVisualisation.Model.RandomGen;
 import SortVisualisation.Model.Sorting.AbstractSort;
-import SortVisualisation.Model.Sorting.QuickSort;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
