@@ -65,7 +65,6 @@ public class QuickSort extends AbstractSort {
                 recursiveQuickSort(sortArray, 0, arrLength - 1);
                 // if we get here, we can assume the quickSort finished
                 isFinished = true;
-                System.out.println("WE FINISHED!");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -105,8 +104,8 @@ public class QuickSort extends AbstractSort {
                     pointer.updateIndex(0, leftPointer);
                     blockToStepsSemaphore.acquire(); // acquire semaphore to block until sortOneStep is called
 
-                    rightPointer--;
-                    pointer.updateIndex(1, rightPointer);
+                    pointer.updateIndex(1, rightPointer); // this time set the pointer before decrementing
+                    rightPointer--;                       // this works-around bug with issue nr: #14
                     blockToStepsSemaphore.acquire(); // acquire semaphore to block until sortOneStep is called
                 }
             }
