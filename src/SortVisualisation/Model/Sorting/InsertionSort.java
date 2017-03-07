@@ -18,6 +18,8 @@ public class InsertionSort extends AbstractSort {
 
     @Override
     public Pointer getPointer() {
+        if (isFinished()) // this solves the going out of bounds bug from issue #14
+            return new Pointer(firstPointer);
         return new Pointer(new int[]{firstPointer, firstPointer+1});
     }
 
@@ -34,6 +36,7 @@ public class InsertionSort extends AbstractSort {
             }
             sortArray[temp + 1] = insert; // put int in right place
             firstPointer++;
+            System.out.println("Are we going out of bounds? " + firstPointer);
         }
         
         return sortArray;
