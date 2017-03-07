@@ -20,7 +20,7 @@
                   legendVisible="false"
                   barGap="3"
                   categoryGap="0"
-                  title="BubbleSort Data">
+                  title="InsertionSort Data">
             <yAxis>
                 <NumberAxis label="Values"
                             fx:id="bcYAxis"

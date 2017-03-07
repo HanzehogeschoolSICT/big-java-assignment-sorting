@@ -36,7 +36,6 @@ public class InsertionSort extends AbstractSort {
             }
             sortArray[temp + 1] = insert; // put int in right place
             firstPointer++;
-            System.out.println("Are we going out of bounds? " + firstPointer);
         }
         
         return sortArray;
